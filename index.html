@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Meg Academy | تسجيل العضوية</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="simple-page">
+    <main class="simple-wrap">
+      <section class="simple-card" id="register">
+        <header class="simple-header">
+          <img class="simple-logo" src="assets/the-meg-logo.png" alt="The Meg Academy">
+          <div>
+            <h1>The Meg Academy</h1>
+            <p>تسجيل العضوية</p>
+          </div>
+        </header>
+
+        <form class="simple-form" id="registrationForm">
+          <label class="field">
+            <span class="label">الاسم</span>
+            <input
+              class="input"
+              id="fullName"
+              name="fullName"
+              placeholder="اكتب الاسم بالكامل"
+              autocomplete="name"
+              lang="ar"
+              pattern="[\u0600-\u06FF\s]+"
+              title="اكتب الاسم باللغة العربية فقط"
+              required
+            >
+          </label>
+
+          <label class="field">
+            <span class="label">رقم التليفون</span>
+            <input class="input" id="phone" name="phone" placeholder="01012345678" autocomplete="tel" inputmode="tel" required>
+          </label>
+
+          <label class="field">
+            <span class="label">تاريخ الميلاد</span>
+            <div class="date-parts">
+              <select class="select" id="birthDay" aria-label="Day" required>
+                <option value="">Day</option>
+              </select>
+              <select class="select" id="birthMonth" aria-label="Month" required>
+                <option value="">Month</option>
+              </select>
+              <select class="select" id="birthYear" aria-label="Year" required>
+                <option value="">Year</option>
+              </select>
+            </div>
+            <input id="birthDate" name="birthDate" type="hidden">
+          </label>
+
+          <label class="field">
+            <span class="label">الفرع</span>
+            <select class="select" id="branch" name="branch" required>
+              <option value="">اختار الفرع</option>
+              <option value="طلائع الزيتون">طلائع الزيتون</option>
+              <option value="مركز شباب امبابه">مركز شباب امبابه</option>
+              <option value="دار ضباط النقل">دار ضباط النقل</option>
+              <option value="مركز التنميه الشبابيه بشبرا الخيمه">مركز التنميه الشبابيه بشبرا الخيمه</option>
+              <option value="ستار كلوب">ستار كلوب</option>
+              <option value="جزيره المعادي">جزيره المعادي</option>
+              <option value="__other_branch__">فرع آخر</option>
+            </select>
+          </label>
+
+          <label class="field hidden" id="otherBranchField">
+            <span class="label">اسم الفرع</span>
+            <input class="input" id="otherBranch" name="otherBranch" placeholder="اكتب اسم الفرع">
+          </label>
+
+          <div class="field">
+            <span class="label">نوع العضوية</span>
+            <div class="membership-options" role="group" aria-label="نوع العضوية">
+              <button class="membership-choice" type="button" data-membership="سباحة">سباحة</button>
+              <button class="membership-choice" type="button" data-membership="زعانف">زعانف</button>
+              <button class="membership-choice" type="button" data-membership="سباحة وزعانف">الاتنين</button>
+            </div>
+            <input id="membershipType" name="membershipType" type="hidden" required>
+          </div>
+
+          <button class="button button--primary simple-submit" id="submitButton" type="submit">
+            تسجيل العضو
+          </button>
+
+          <div class="status hidden" id="formStatus" role="status"></div>
+        </form>
+
+      </section>
+    </main>
+
+    <script src="shared.js"></script>
+    <script src="register.js"></script>
+  </body>
+</html>

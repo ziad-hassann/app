@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>لوحة الإدارة</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="topbar__inner">
+          <div class="brand">
+            <img class="brand__logo" src="assets/the-meg-logo.png" alt="The Meg Academy">
+            <div>
+              <p class="brand__title">The Meg Academy</p>
+              <p class="brand__subtitle">الداتا مفصولة حسب كل فرع</p>
+            </div>
+          </div>
+          <a class="nav-link" href="index.html">صفحة التسجيل</a>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="panel login-panel" id="loginPanel">
+          <div class="panel__header">
+            <h1>دخول الإدارة</h1>
+            <p>اكتب كلمة السر لعرض الداتا وتصدير ملف Excel.</p>
+          </div>
+          <form class="form" id="loginForm">
+            <label class="field">
+              <span class="label">كلمة السر</span>
+              <input class="input" id="adminPassword" type="password" placeholder="اكتب كلمة السر" required>
+            </label>
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">دخول</button>
+              <div class="status hidden" id="loginStatus" role="status"></div>
+            </div>
+          </form>
+        </section>
+
+        <section class="hidden" id="dashboard">
+          <div class="admin-header">
+            <div>
+              <h1>التسجيلات</h1>
+              <p>اعرض كل الداتا أو اختار فرع معين، وملف Excel هيكون فيه Sheet لكل فرع.</p>
+            </div>
+            <div class="admin-actions">
+              <button class="button button--secondary" id="refreshButton" type="button">تحديث</button>
+              <button class="button button--primary" id="exportButton" type="button">تحميل Excel</button>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <strong id="totalCount">0</strong>
+              <span>إجمالي التسجيلات</span>
+            </div>
+            <div class="stat">
+              <strong id="branchesCount">0</strong>
+              <span>عدد الفروع</span>
+            </div>
+            <div class="stat">
+              <strong id="visibleCount">0</strong>
+              <span id="visibleLabel">المعروض الآن</span>
+            </div>
+          </div>
+
+          <div class="branch-tabs" id="branchTabs" aria-label="تصفية حسب الفرع"></div>
+          <div class="status hidden" id="dashboardStatus" role="status"></div>
+
+          <section class="panel table-panel">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>الاسم</th>
+                    <th>رقم التليفون</th>
+                    <th>تاريخ الميلاد</th>
+                    <th>الفرع</th>
+                    <th>نوع العضوية</th>
+                    <th>واتساب</th>
+                    <th>تاريخ التسجيل</th>
+                  </tr>
+                </thead>
+                <tbody id="recordsBody"></tbody>
+              </table>
+            </div>
+            <div class="empty hidden" id="emptyState">لا توجد تسجيلات لهذا الاختيار حاليًا.</div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="shared.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
