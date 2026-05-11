@@ -8,6 +8,7 @@ lib
 supabase
 out
 .env
+.clasp.json
 .env.example
 .env*.local
 package.json

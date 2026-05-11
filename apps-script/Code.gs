@@ -56,9 +56,12 @@ function register_(params) {
     return { ok: true, duplicate: true, message: 'تم تسجيل هذا العضو من قبل.' };
   }
 
-  sheet.appendRow(HEADERS.map(function (header) {
-    return record[header] || '';
-  }));
+  const values = HEADERS.map(function (header) {
+    const value = record[header];
+    return value === null || value === undefined ? '' : String(value);
+  });
+  const nextRow = sheet.getLastRow() + 1;
+  sheet.getRange(nextRow, 1, 1, HEADERS.length).setNumberFormat('@').setValues([values]);
 
   return { ok: true, duplicate: false, message: 'تم تسجيل بيانات العضو بنجاح.' };
 }
@@ -92,8 +95,9 @@ function getSheet_() {
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     sheet.setFrozenRows(1);
-    sheet.getRange('D:E').setNumberFormat('@');
   }
+
+  sheet.getRange(1, 1, sheet.getMaxRows(), HEADERS.length).setNumberFormat('@');
 
   return sheet;
 }
@@ -106,7 +110,7 @@ function getRecords_() {
     return [];
   }
 
-  const values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+  const values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getDisplayValues();
 
   return values.map(function (row) {
     const record = {};
