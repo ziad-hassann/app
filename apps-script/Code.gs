@@ -1,5 +1,7 @@
 const ADMIN_PASSWORD_PROPERTY = 'ADMIN_PASSWORD';
 const SHEET_NAME = 'Registrations';
+const RECORDS_CACHE_KEY = 'registrations-json-v1';
+const RECORDS_CACHE_SECONDS = 60;
 
 const HEADERS = [
   'id',
@@ -58,6 +60,7 @@ function register_(params) {
     });
     const nextRow = sheet.getLastRow() + 1;
     sheet.getRange(nextRow, 1, 1, HEADERS.length).setNumberFormat('@').setValues([values]);
+    CacheService.getScriptCache().remove(RECORDS_CACHE_KEY);
   } finally {
     lock.releaseLock();
   }
@@ -122,6 +125,12 @@ function duplicateExists_(sheet, normalizedPhone, normalizedName) {
 }
 
 function getRecords_() {
+  const cached = CacheService.getScriptCache().get(RECORDS_CACHE_KEY);
+
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
   const sheet = getSheet_();
   const lastRow = sheet.getLastRow();
 
@@ -131,13 +140,21 @@ function getRecords_() {
 
   const values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getDisplayValues();
 
-  return values.map(function (row) {
+  const records = values.map(function (row) {
     const record = {};
     HEADERS.forEach(function (header, index) {
       record[header] = row[index];
     });
     return record;
   });
+
+  const recordsJson = JSON.stringify(records);
+
+  if (recordsJson.length < 90000) {
+    CacheService.getScriptCache().put(RECORDS_CACHE_KEY, recordsJson, RECORDS_CACHE_SECONDS);
+  }
+
+  return records;
 }
 
 function respond_(data, callback) {
