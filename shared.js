@@ -51,7 +51,7 @@
       const timeout = window.setTimeout(function () {
         cleanup();
         reject(new Error("Google Sheet connection timed out."));
-      }, 25000);
+      }, 60000);
 
       function cleanup() {
         window.clearTimeout(timeout);
