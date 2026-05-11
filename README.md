@@ -7,12 +7,14 @@ Static HTML/CSS/JS registration form for GitHub Pages.
 - `index.html`
 - `admin.html`
 - `styles.css`
+- `config.js`
 - `shared.js`
 - `register.js`
 - `admin.js`
 - `assets/`
 - `vendor/`
+- `apps-script/`
 
 ## Important
 
-This static version is suitable for preview and GitHub Pages hosting. To collect registrations from different devices in one shared place, connect the form to an online database/API.
+To collect registrations from different devices in one shared place, deploy `apps-script/Code.gs` as a Google Apps Script Web App and paste the deployment URL into `config.js`.

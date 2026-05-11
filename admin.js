@@ -1,5 +1,5 @@
 (function () {
-  const ADMIN_PASSWORD = "admin123";
+  const ADMIN_PASSWORD = (window.WEB_DATA_CONFIG && window.WEB_DATA_CONFIG.ADMIN_PASSWORD) || "admin123";
   const loginPanel = document.getElementById("loginPanel");
   const loginForm = document.getElementById("loginForm");
   const passwordInput = document.getElementById("adminPassword");
@@ -18,6 +18,16 @@
 
   let records = [];
   let activeBranch = "all";
+  let currentAdminPassword = "";
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   function groupByBranch(list) {
     return list.reduce(function (groups, record) {
@@ -77,13 +87,13 @@
       const row = document.createElement("tr");
 
       row.innerHTML =
-        "<td>" + record.full_name + "</td>" +
-        "<td>" + record.phone + "</td>" +
-        "<td>" + record.birth_date + "</td>" +
-        "<td>" + record.branch + "</td>" +
-        "<td>" + record.membership_type + "</td>" +
-        '<td><a class="whatsapp-link" href="' + record.whatsapp_url + '" target="_blank">فتح واتساب</a></td>' +
-        "<td>" + WebData.formatDisplayDate(record.created_at) + "</td>";
+        "<td>" + escapeHtml(record.full_name) + "</td>" +
+        "<td>" + escapeHtml(record.phone) + "</td>" +
+        "<td>" + escapeHtml(record.birth_date) + "</td>" +
+        "<td>" + escapeHtml(record.branch) + "</td>" +
+        "<td>" + escapeHtml(record.membership_type) + "</td>" +
+        '<td><a class="whatsapp-link" href="' + escapeHtml(record.whatsapp_url) + '" target="_blank">فتح واتساب</a></td>' +
+        "<td>" + escapeHtml(WebData.formatDisplayDate(record.created_at)) + "</td>";
 
       recordsBody.appendChild(row);
     });
@@ -104,13 +114,22 @@
     renderTable(visibleRecords);
   }
 
-  function loadRecords() {
-    records = WebData.getRegistrations().sort(function (a, b) {
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
+  async function loadRecords() {
+    WebData.setStatus(dashboardStatus, "info", "جاري تحميل الداتا...");
+    refreshButton.disabled = true;
 
-    render();
-    WebData.setStatus(dashboardStatus, "success", "تم تحميل الداتا بنجاح.");
+    try {
+      records = (await WebData.listRegistrations(currentAdminPassword)).sort(function (a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      render();
+      WebData.setStatus(dashboardStatus, "success", "تم تحميل الداتا بنجاح.");
+    } catch (error) {
+      WebData.setStatus(dashboardStatus, "error", error.message || "تعذر تحميل الداتا.");
+    } finally {
+      refreshButton.disabled = false;
+    }
   }
 
   function toSheetRows(list) {
@@ -186,6 +205,7 @@
       return;
     }
 
+    currentAdminPassword = passwordInput.value;
     loginPanel.classList.add("hidden");
     dashboard.classList.remove("hidden");
     loadRecords();

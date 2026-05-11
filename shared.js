@@ -24,6 +24,70 @@
     "۹": "9"
   };
 
+  function getConfig() {
+    return window.WEB_DATA_CONFIG || {};
+  }
+
+  function getAppsScriptUrl() {
+    return String(getConfig().APPS_SCRIPT_URL || "").trim();
+  }
+
+  function hasRemoteApi() {
+    return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(getAppsScriptUrl());
+  }
+
+  function apiRequest(params) {
+    const apiUrl = getAppsScriptUrl();
+
+    if (!hasRemoteApi()) {
+      return Promise.reject(new Error("Apps Script URL is not configured."));
+    }
+
+    return new Promise(function (resolve, reject) {
+      const callbackName =
+        "__webDataCallback_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+      const script = document.createElement("script");
+      const url = new URL(apiUrl);
+      const timeout = window.setTimeout(function () {
+        cleanup();
+        reject(new Error("Google Sheet connection timed out."));
+      }, 25000);
+
+      function cleanup() {
+        window.clearTimeout(timeout);
+        delete window[callbackName];
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      }
+
+      window[callbackName] = function (response) {
+        cleanup();
+
+        if (!response || response.ok === false) {
+          reject(new Error((response && response.message) || "Google Sheet request failed."));
+          return;
+        }
+
+        resolve(response);
+      };
+
+      Object.keys(params || {}).forEach(function (key) {
+        url.searchParams.set(key, params[key]);
+      });
+      url.searchParams.set("callback", callbackName);
+      url.searchParams.set("_", Date.now());
+
+      script.onerror = function () {
+        cleanup();
+        reject(new Error("Could not connect to Google Sheet."));
+      };
+
+      script.src = url.toString();
+      document.body.appendChild(script);
+    });
+  }
+
   function toLatinDigits(value) {
     return String(value || "").replace(/[٠-٩۰-۹]/g, function (digit) {
       return arabicDigits[digit];
@@ -80,27 +144,18 @@
 
   function parseBirthDate(value) {
     const normalized = toLatinDigits(value).trim();
-    const dmy = normalized.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-    const ymd = normalized.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+    const ymd = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     let day;
     let month;
     let year;
 
-    if (dmy) {
-      day = Number(dmy[1]);
-      month = Number(dmy[2]);
-      year = Number(dmy[3]);
-    } else if (ymd) {
-      year = Number(ymd[1]);
-      month = Number(ymd[2]);
-      day = Number(ymd[3]);
-    } else {
-      return {
-        valid: false,
-        iso: "",
-        message: "اكتب تاريخ الميلاد بصيغة يوم/شهر/سنة مثل 15/01/2000."
-      };
+    if (!ymd) {
+      return { valid: false, iso: "", message: "اختار تاريخ الميلاد بالكامل." };
     }
+
+    year = Number(ymd[1]);
+    month = Number(ymd[2]);
+    day = Number(ymd[3]);
 
     if (year < 1900 || year > new Date().getFullYear() || !isRealDate(year, month, day)) {
       return { valid: false, iso: "", message: "اختار تاريخ ميلاد صحيح." };
@@ -118,7 +173,7 @@
     return "https://wa.me/20" + normalized.slice(1);
   }
 
-  function getRegistrations() {
+  function getLocalRegistrations() {
     try {
       const records = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
       return Array.isArray(records) ? records : [];
@@ -127,24 +182,48 @@
     }
   }
 
-  function saveRegistrations(records) {
+  function saveLocalRegistrations(records) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   }
 
-  function addRegistration(record) {
-    const records = getRegistrations();
+  function addLocalRegistration(record) {
+    const records = getLocalRegistrations();
     const exists = records.some(function (item) {
       const itemName = item.normalized_name || normalizeMemberName(item.full_name);
       return item.normalized_phone === record.normalized_phone && itemName === record.normalized_name;
     });
 
     if (exists) {
-      return { duplicate: true };
+      return { ok: true, duplicate: true, message: "تم تسجيل هذا العضو من قبل." };
     }
 
     records.push(record);
-    saveRegistrations(records);
-    return { duplicate: false, record: record };
+    saveLocalRegistrations(records);
+    return { ok: true, duplicate: false, record: record, message: "تم تسجيل بيانات العضو بنجاح." };
+  }
+
+  function createRegistration(record) {
+    if (!hasRemoteApi()) {
+      return Promise.resolve(addLocalRegistration(record));
+    }
+
+    return apiRequest({
+      action: "register",
+      payload: JSON.stringify(record)
+    });
+  }
+
+  function listRegistrations(adminPassword) {
+    if (!hasRemoteApi()) {
+      return Promise.resolve(getLocalRegistrations());
+    }
+
+    return apiRequest({
+      action: "list",
+      admin_password: adminPassword || ""
+    }).then(function (response) {
+      return response.registrations || [];
+    });
   }
 
   function formatDisplayDate(value) {
@@ -189,8 +268,8 @@
     validatePhone: validatePhone,
     parseBirthDate: parseBirthDate,
     getWhatsappUrl: getWhatsappUrl,
-    getRegistrations: getRegistrations,
-    addRegistration: addRegistration,
+    createRegistration: createRegistration,
+    listRegistrations: listRegistrations,
     formatDisplayDate: formatDisplayDate,
     makeId: makeId,
     setStatus: setStatus,

@@ -85,13 +85,13 @@
     birthDateInput.value = "";
   }
 
-  setupBirthDateFields();
-
-  function markSelectedTemplate(value) {
+  function markSelectedMembership(value) {
     membershipChoices.forEach(function (button) {
       button.classList.toggle("membership-choice--selected", button.dataset.membership === value);
     });
   }
+
+  setupBirthDateFields();
 
   branchSelect.addEventListener("change", function () {
     const isOtherBranch = branchSelect.value === "__other_branch__";
@@ -125,14 +125,15 @@
   membershipChoices.forEach(function (button) {
     button.addEventListener("click", function () {
       membershipTypeSelect.value = button.dataset.membership;
-      markSelectedTemplate(button.dataset.membership);
+      markSelectedMembership(button.dataset.membership);
       WebData.clearStatus(statusBox);
     });
   });
 
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
     submitButton.disabled = true;
+    WebData.setStatus(statusBox, "info", "جاري تسجيل البيانات...");
 
     const fullName = WebData.cleanText(fullNameInput.value);
     const phoneCheck = WebData.validatePhone(phoneInput.value);
@@ -192,20 +193,25 @@
       created_at: new Date().toISOString()
     };
 
-    const result = WebData.addRegistration(record);
+    try {
+      const result = await WebData.createRegistration(record);
 
-    if (result.duplicate) {
-      WebData.setStatus(statusBox, "error", "تم تسجيل هذا العضو من قبل.");
+      if (result.duplicate) {
+        WebData.setStatus(statusBox, "error", result.message || "تم تسجيل هذا العضو من قبل.");
+        submitButton.disabled = false;
+        return;
+      }
+
+      form.reset();
+      birthDateInput.value = "";
+      markSelectedMembership("");
+      otherBranchField.classList.add("hidden");
+      otherBranchInput.required = false;
+      WebData.setStatus(statusBox, "success", result.message || "تم تسجيل بيانات العضو بنجاح.");
+    } catch (error) {
+      WebData.setStatus(statusBox, "error", error.message || "تعذر تسجيل البيانات. حاول مرة أخرى.");
+    } finally {
       submitButton.disabled = false;
-      return;
     }
-
-    form.reset();
-    birthDateInput.value = "";
-    markSelectedTemplate("");
-    otherBranchField.classList.add("hidden");
-    otherBranchInput.required = false;
-    WebData.setStatus(statusBox, "success", "تم تسجيل بيانات العضو بنجاح.");
-    submitButton.disabled = false;
   });
 })();

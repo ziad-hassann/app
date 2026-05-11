@@ -1,0 +1,4 @@
+window.WEB_DATA_CONFIG = {
+  APPS_SCRIPT_URL: "",
+  ADMIN_PASSWORD: "admin123"
+};
