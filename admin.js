@@ -19,6 +19,8 @@
   let activeBranch = "all";
   let currentAdminPassword = "";
 
+  window.setTimeout(WebData.warmRemoteApi, 800);
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")

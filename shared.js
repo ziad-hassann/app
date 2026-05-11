@@ -226,6 +226,14 @@
     });
   }
 
+  function warmRemoteApi() {
+    if (!hasRemoteApi()) {
+      return Promise.resolve();
+    }
+
+    return apiRequest({ action: "ping" }).catch(function () {});
+  }
+
   function formatDisplayDate(value) {
     if (!value) {
       return "";
@@ -270,6 +278,7 @@
     getWhatsappUrl: getWhatsappUrl,
     createRegistration: createRegistration,
     listRegistrations: listRegistrations,
+    warmRemoteApi: warmRemoteApi,
     formatDisplayDate: formatDisplayDate,
     makeId: makeId,
     setStatus: setStatus,

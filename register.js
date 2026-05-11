@@ -92,6 +92,7 @@
   }
 
   setupBirthDateFields();
+  window.setTimeout(WebData.warmRemoteApi, 800);
 
   branchSelect.addEventListener("change", function () {
     const isOtherBranch = branchSelect.value === "__other_branch__";

@@ -36,8 +36,8 @@ function doGet(e) {
 function register_(params) {
   const payloadText = params.payload || '';
   const record = JSON.parse(payloadText);
+  const lock = LockService.getScriptLock();
   const sheet = getSheet_();
-  const rows = getRecords_();
   const normalizedPhone = String(record.normalized_phone || '').trim();
   const normalizedName = String(record.normalized_name || '').trim();
 
@@ -45,23 +45,22 @@ function register_(params) {
     return { ok: false, message: 'بيانات التسجيل غير مكتملة.' };
   }
 
-  const exists = rows.some(function (item) {
-    return (
-      String(item.normalized_phone || '').trim() === normalizedPhone &&
-      String(item.normalized_name || '').trim() === normalizedName
-    );
-  });
+  lock.waitLock(10000);
 
-  if (exists) {
-    return { ok: true, duplicate: true, message: 'تم تسجيل هذا العضو من قبل.' };
+  try {
+    if (duplicateExists_(sheet, normalizedPhone, normalizedName)) {
+      return { ok: true, duplicate: true, message: 'تم تسجيل هذا العضو من قبل.' };
+    }
+
+    const values = HEADERS.map(function (header) {
+      const value = record[header];
+      return value === null || value === undefined ? '' : String(value);
+    });
+    const nextRow = sheet.getLastRow() + 1;
+    sheet.getRange(nextRow, 1, 1, HEADERS.length).setNumberFormat('@').setValues([values]);
+  } finally {
+    lock.releaseLock();
   }
-
-  const values = HEADERS.map(function (header) {
-    const value = record[header];
-    return value === null || value === undefined ? '' : String(value);
-  });
-  const nextRow = sheet.getLastRow() + 1;
-  sheet.getRange(nextRow, 1, 1, HEADERS.length).setNumberFormat('@').setValues([values]);
 
   return { ok: true, duplicate: false, message: 'تم تسجيل بيانات العضو بنجاح.' };
 }
@@ -99,11 +98,27 @@ function getSheet_() {
     sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, HEADERS.length).setNumberFormat('@');
   }
 
-  sheet.getRange(1, 1, sheet.getMaxRows(), HEADERS.length).setNumberFormat('@');
-
   return sheet;
+}
+
+function duplicateExists_(sheet, normalizedPhone, normalizedName) {
+  const lastRow = sheet.getLastRow();
+
+  if (lastRow < 2) {
+    return false;
+  }
+
+  const values = sheet.getRange(2, 3, lastRow - 1, 3).getDisplayValues();
+
+  return values.some(function (row) {
+    return (
+      String(row[0] || '').trim() === normalizedName &&
+      String(row[2] || '').trim() === normalizedPhone
+    );
+  });
 }
 
 function getRecords_() {
