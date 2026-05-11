@@ -1,4 +1,4 @@
-const ADMIN_PASSWORD = 'admin123';
+const ADMIN_PASSWORD_PROPERTY = 'ADMIN_PASSWORD';
 const SHEET_NAME = 'Registrations';
 
 const HEADERS = [
@@ -67,7 +67,7 @@ function register_(params) {
 }
 
 function list_(params) {
-  if (params.admin_password !== ADMIN_PASSWORD) {
+  if (params.admin_password !== getAdminPassword_()) {
     return { ok: false, message: 'كلمة السر غير صحيحة.' };
   }
 
@@ -75,6 +75,10 @@ function list_(params) {
     ok: true,
     registrations: getRecords_().reverse()
   };
+}
+
+function getAdminPassword_() {
+  return PropertiesService.getScriptProperties().getProperty(ADMIN_PASSWORD_PROPERTY) || '';
 }
 
 function getSheet_() {

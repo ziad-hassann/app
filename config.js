@@ -1,4 +1,3 @@
 window.WEB_DATA_CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwC5ANdqD0Af8eUuybB0_r-Kp_-ooEQWUvhqI_EtAL1LvuvaGtu2qym-2LBMOiKS1JU1w/exec",
-  ADMIN_PASSWORD: "admin123"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyqqcI1FfZvp33p2acPFVe54y9QLGh35jv6N2vvUEYAtH6lVh1uh-e1FyQsJwbxiaNPxA/exec"
 };

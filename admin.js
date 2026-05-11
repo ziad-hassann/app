@@ -1,5 +1,4 @@
 (function () {
-  const ADMIN_PASSWORD = (window.WEB_DATA_CONFIG && window.WEB_DATA_CONFIG.ADMIN_PASSWORD) || "admin123";
   const loginPanel = document.getElementById("loginPanel");
   const loginForm = document.getElementById("loginForm");
   const passwordInput = document.getElementById("adminPassword");
@@ -200,12 +199,12 @@
   loginForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    if (passwordInput.value !== ADMIN_PASSWORD) {
+    if (!passwordInput.value.trim()) {
       WebData.setStatus(loginStatus, "error", "كلمة السر غير صحيحة.");
       return;
     }
 
-    currentAdminPassword = passwordInput.value;
+    currentAdminPassword = passwordInput.value.trim();
     loginPanel.classList.add("hidden");
     dashboard.classList.remove("hidden");
     loadRecords();
