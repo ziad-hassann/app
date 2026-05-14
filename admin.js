@@ -32,7 +32,7 @@
 
   function groupByBranch(list) {
     return list.reduce(function (groups, record) {
-      const branch = record.branch || "بدون فرع";
+      const branch = record.branch || "\u0628\u062f\u0648\u0646 \u0641\u0631\u0639";
       groups[branch] = groups[branch] || [];
       groups[branch].push(record);
       return groups;
@@ -73,7 +73,7 @@
 
   function renderTabs(grouped, branches) {
     branchTabs.innerHTML = "";
-    branchTabs.appendChild(createBranchButton("الكل", records.length, "all"));
+    branchTabs.appendChild(createBranchButton("\u0627\u0644\u0643\u0644", records.length, "all"));
 
     branches.forEach(function (branch) {
       branchTabs.appendChild(createBranchButton(branch, grouped[branch].length, branch));
@@ -93,7 +93,7 @@
         "<td>" + escapeHtml(record.birth_date) + "</td>" +
         "<td>" + escapeHtml(record.branch) + "</td>" +
         "<td>" + escapeHtml(record.membership_type) + "</td>" +
-        '<td><a class="whatsapp-link" href="' + escapeHtml(record.whatsapp_url) + '" target="_blank">فتح واتساب</a></td>' +
+        '<td><a class="whatsapp-link" href="' + escapeHtml(record.whatsapp_url) + '" target="_blank">\u0641\u062a\u062d \u0648\u0627\u062a\u0633\u0627\u0628</a></td>' +
         "<td>" + escapeHtml(WebData.formatDisplayDate(record.created_at)) + "</td>";
 
       recordsBody.appendChild(row);
@@ -108,7 +108,7 @@
     totalCount.textContent = records.length;
     branchesCount.textContent = branches.length;
     visibleCount.textContent = visibleRecords.length;
-    visibleLabel.textContent = activeBranch === "all" ? "المعروض الآن" : activeBranch;
+    visibleLabel.textContent = activeBranch === "all" ? "\u0627\u0644\u0645\u0639\u0631\u0648\u0636 \u0627\u0644\u0622\u0646" : activeBranch;
     exportButton.disabled = records.length === 0;
 
     renderTabs(grouped, branches);
@@ -116,7 +116,7 @@
   }
 
   async function loadRecords() {
-    WebData.setStatus(dashboardStatus, "info", "جاري تحميل الداتا...");
+    WebData.setStatus(dashboardStatus, "info", "\u062c\u0627\u0631\u064a \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062f\u0627\u062a\u0627...");
     refreshButton.disabled = true;
 
     try {
@@ -125,9 +125,9 @@
       });
 
       render();
-      WebData.setStatus(dashboardStatus, "success", "تم تحميل الداتا بنجاح.");
+      WebData.setStatus(dashboardStatus, "success", "\u062a\u0645 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062f\u0627\u062a\u0627 \u0628\u0646\u062c\u0627\u062d.");
     } catch (error) {
-      WebData.setStatus(dashboardStatus, "error", error.message || "تعذر تحميل الداتا.");
+      WebData.setStatus(dashboardStatus, "error", error.message || "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062f\u0627\u062a\u0627.");
     } finally {
       refreshButton.disabled = false;
     }
@@ -136,13 +136,13 @@
   function toSheetRows(list) {
     return list.map(function (record) {
       return {
-        "الاسم": record.full_name,
-        "رقم التليفون": record.phone,
-        "تاريخ الميلاد": record.birth_date,
-        "الفرع": record.branch,
-        "نوع العضوية": record.membership_type,
-        "واتساب": record.whatsapp_url,
-        "تاريخ التسجيل": WebData.formatDisplayDate(record.created_at)
+        "\u0627\u0644\u0627\u0633\u0645": record.full_name,
+        "\u0631\u0642\u0645 \u0627\u0644\u062a\u0644\u064a\u0641\u0648\u0646": record.phone,
+        "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u064a\u0644\u0627\u062f": record.birth_date,
+        "\u0627\u0644\u0641\u0631\u0639": record.branch,
+        "\u0646\u0648\u0639 \u0627\u0644\u0639\u0636\u0648\u064a\u0629": record.membership_type,
+        "\u0648\u0627\u062a\u0633\u0627\u0628": record.whatsapp_url,
+        "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u062a\u0633\u062c\u064a\u0644": WebData.formatDisplayDate(record.created_at)
       };
     });
   }
@@ -173,12 +173,12 @@
   }
 
   function safeSheetName(name) {
-    return String(name || "فرع").replace(/[\\/?*\[\]:]/g, " ").slice(0, 31) || "فرع";
+    return String(name || "\u0641\u0631\u0639").replace(/[\\/?*\[\]:]/g, " ").slice(0, 31) || "\u0641\u0631\u0639";
   }
 
   function exportExcel() {
     if (!window.XLSX) {
-      WebData.setStatus(dashboardStatus, "error", "ملف مكتبة Excel غير موجود.");
+      WebData.setStatus(dashboardStatus, "error", "\u0645\u0644\u0641 \u0645\u0643\u062a\u0628\u0629 Excel \u063a\u064a\u0631 \u0645\u0648\u062c\u0648\u062f.");
       return;
     }
 
@@ -186,7 +186,7 @@
     const branches = getBranchNames(grouped);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, buildSheet(records), "كل التسجيلات");
+    XLSX.utils.book_append_sheet(workbook, buildSheet(records), "\u0643\u0644 \u0627\u0644\u062a\u0633\u062c\u064a\u0644\u0627\u062a");
 
     branches.forEach(function (branch) {
       XLSX.utils.book_append_sheet(workbook, buildSheet(grouped[branch]), safeSheetName(branch));
@@ -202,7 +202,7 @@
     event.preventDefault();
 
     if (!passwordInput.value.trim()) {
-      WebData.setStatus(loginStatus, "error", "كلمة السر غير صحيحة.");
+      WebData.setStatus(loginStatus, "error", "\u0643\u0644\u0645\u0629 \u0627\u0644\u0633\u0631 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d\u0629.");
       return;
     }
 

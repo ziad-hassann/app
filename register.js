@@ -134,7 +134,7 @@
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
     submitButton.disabled = true;
-    WebData.setStatus(statusBox, "info", "جاري تسجيل البيانات...");
+    WebData.setStatus(statusBox, "info", "\u062c\u0627\u0631\u064a \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a...");
 
     const fullName = WebData.cleanText(fullNameInput.value);
     const phoneCheck = WebData.validatePhone(phoneInput.value);
@@ -146,13 +146,13 @@
     const membershipType = WebData.cleanText(membershipTypeSelect.value);
 
     if (fullName.length < 3) {
-      WebData.setStatus(statusBox, "error", "اكتب الاسم بالكامل.");
+      WebData.setStatus(statusBox, "error", "\u0627\u0643\u062a\u0628 \u0627\u0644\u0627\u0633\u0645 \u0628\u0627\u0644\u0643\u0627\u0645\u0644.");
       submitButton.disabled = false;
       return;
     }
 
     if (!/^[\u0600-\u06FF\s]+$/.test(fullName)) {
-      WebData.setStatus(statusBox, "error", "اكتب الاسم باللغة العربية فقط.");
+      WebData.setStatus(statusBox, "error", "\u0627\u0643\u062a\u0628 \u0627\u0644\u0627\u0633\u0645 \u0628\u0627\u0644\u0644\u063a\u0629 \u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u0641\u0642\u0637.");
       submitButton.disabled = false;
       return;
     }
@@ -170,13 +170,13 @@
     }
 
     if (!branch) {
-      WebData.setStatus(statusBox, "error", "اختار الفرع أو اكتب اسم الفرع.");
+      WebData.setStatus(statusBox, "error", "\u0627\u062e\u062a\u0627\u0631 \u0627\u0644\u0641\u0631\u0639 \u0623\u0648 \u0627\u0643\u062a\u0628 \u0627\u0633\u0645 \u0627\u0644\u0641\u0631\u0639.");
       submitButton.disabled = false;
       return;
     }
 
     if (!membershipType) {
-      WebData.setStatus(statusBox, "error", "اختار نوع العضوية.");
+      WebData.setStatus(statusBox, "error", "\u0627\u062e\u062a\u0627\u0631 \u0646\u0648\u0639 \u0627\u0644\u0639\u0636\u0648\u064a\u0629.");
       submitButton.disabled = false;
       return;
     }
@@ -198,7 +198,7 @@
       const result = await WebData.createRegistration(record);
 
       if (result.duplicate) {
-        WebData.setStatus(statusBox, "error", result.message || "تم تسجيل هذا العضو من قبل.");
+        WebData.setStatus(statusBox, "error", result.message || "\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0647\u0630\u0627 \u0627\u0644\u0639\u0636\u0648 \u0645\u0646 \u0642\u0628\u0644.");
         submitButton.disabled = false;
         return;
       }
@@ -208,9 +208,9 @@
       markSelectedMembership("");
       otherBranchField.classList.add("hidden");
       otherBranchInput.required = false;
-      WebData.setStatus(statusBox, "success", result.message || "تم تسجيل بيانات العضو بنجاح.");
+      WebData.setStatus(statusBox, "success", result.message || "\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0639\u0636\u0648 \u0628\u0646\u062c\u0627\u062d.");
     } catch (error) {
-      WebData.setStatus(statusBox, "error", error.message || "تعذر تسجيل البيانات. حاول مرة أخرى.");
+      WebData.setStatus(statusBox, "error", error.message || "\u062a\u0639\u0630\u0631 \u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a. \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.");
     } finally {
       submitButton.disabled = false;
     }

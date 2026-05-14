@@ -2,8 +2,10 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ar">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>لوحة الإدارة</title>
+    <title>&#x644;&#x648;&#x62D;&#x629; &#x627;&#x644;&#x625;&#x62F;&#x627;&#x631;&#x629;</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -14,26 +16,26 @@
             <img class="brand__logo" src="assets/the-meg-logo.png" alt="The Meg Academy">
             <div>
               <p class="brand__title">The Meg Academy</p>
-              <p class="brand__subtitle">الداتا مفصولة حسب كل فرع</p>
+              <p class="brand__subtitle">&#x627;&#x644;&#x62F;&#x627;&#x62A;&#x627; &#x645;&#x641;&#x635;&#x648;&#x644;&#x629; &#x62D;&#x633;&#x628; &#x643;&#x644; &#x641;&#x631;&#x639;</p>
             </div>
           </div>
-          <a class="nav-link" href="index.html">صفحة التسجيل</a>
+          <a class="nav-link" href="index.html">&#x635;&#x641;&#x62D;&#x629; &#x627;&#x644;&#x62A;&#x633;&#x62C;&#x64A;&#x644;</a>
         </div>
       </header>
 
       <main class="main">
         <section class="panel login-panel" id="loginPanel">
           <div class="panel__header">
-            <h1>دخول الإدارة</h1>
-            <p>اكتب كلمة السر لعرض الداتا وتصدير ملف Excel.</p>
+            <h1>&#x62F;&#x62E;&#x648;&#x644; &#x627;&#x644;&#x625;&#x62F;&#x627;&#x631;&#x629;</h1>
+            <p>&#x627;&#x643;&#x62A;&#x628; &#x643;&#x644;&#x645;&#x629; &#x627;&#x644;&#x633;&#x631; &#x644;&#x639;&#x631;&#x636; &#x627;&#x644;&#x62F;&#x627;&#x62A;&#x627; &#x648;&#x62A;&#x635;&#x62F;&#x64A;&#x631; &#x645;&#x644;&#x641; Excel.</p>
           </div>
-          <form class="form" id="loginForm">
+          <form class="form" id="loginForm" accept-charset="UTF-8">
             <label class="field">
-              <span class="label">كلمة السر</span>
-              <input class="input" id="adminPassword" type="password" placeholder="اكتب كلمة السر" required>
+              <span class="label">&#x643;&#x644;&#x645;&#x629; &#x627;&#x644;&#x633;&#x631;</span>
+              <input class="input" id="adminPassword" type="password" placeholder="&#x627;&#x643;&#x62A;&#x628; &#x643;&#x644;&#x645;&#x629; &#x627;&#x644;&#x633;&#x631;" required>
             </label>
             <div class="form-actions">
-              <button class="button button--primary" type="submit">دخول</button>
+              <button class="button button--primary" type="submit">&#x62F;&#x62E;&#x648;&#x644;</button>
               <div class="status hidden" id="loginStatus" role="status"></div>
             </div>
           </form>
@@ -42,31 +44,31 @@
         <section class="hidden" id="dashboard">
           <div class="admin-header">
             <div>
-              <h1>التسجيلات</h1>
-              <p>اعرض كل الداتا أو اختار فرع معين، وملف Excel هيكون فيه Sheet لكل فرع.</p>
+              <h1>&#x627;&#x644;&#x62A;&#x633;&#x62C;&#x64A;&#x644;&#x627;&#x62A;</h1>
+              <p>&#x627;&#x639;&#x631;&#x636; &#x643;&#x644; &#x627;&#x644;&#x62F;&#x627;&#x62A;&#x627; &#x623;&#x648; &#x627;&#x62E;&#x62A;&#x627;&#x631; &#x641;&#x631;&#x639; &#x645;&#x639;&#x64A;&#x646;&#x60C; &#x648;&#x645;&#x644;&#x641; Excel &#x647;&#x64A;&#x643;&#x648;&#x646; &#x641;&#x64A;&#x647; Sheet &#x644;&#x643;&#x644; &#x641;&#x631;&#x639;.</p>
             </div>
             <div class="admin-actions">
-              <button class="button button--secondary" id="refreshButton" type="button">تحديث</button>
-              <button class="button button--primary" id="exportButton" type="button">تحميل Excel</button>
+              <button class="button button--secondary" id="refreshButton" type="button">&#x62A;&#x62D;&#x62F;&#x64A;&#x62B;</button>
+              <button class="button button--primary" id="exportButton" type="button">&#x62A;&#x62D;&#x645;&#x64A;&#x644; Excel</button>
             </div>
           </div>
 
           <div class="stats">
             <div class="stat">
               <strong id="totalCount">0</strong>
-              <span>إجمالي التسجيلات</span>
+              <span>&#x625;&#x62C;&#x645;&#x627;&#x644;&#x64A; &#x627;&#x644;&#x62A;&#x633;&#x62C;&#x64A;&#x644;&#x627;&#x62A;</span>
             </div>
             <div class="stat">
               <strong id="branchesCount">0</strong>
-              <span>عدد الفروع</span>
+              <span>&#x639;&#x62F;&#x62F; &#x627;&#x644;&#x641;&#x631;&#x648;&#x639;</span>
             </div>
             <div class="stat">
               <strong id="visibleCount">0</strong>
-              <span id="visibleLabel">المعروض الآن</span>
+              <span id="visibleLabel">&#x627;&#x644;&#x645;&#x639;&#x631;&#x648;&#x636; &#x627;&#x644;&#x622;&#x646;</span>
             </div>
           </div>
 
-          <div class="branch-tabs" id="branchTabs" aria-label="تصفية حسب الفرع"></div>
+          <div class="branch-tabs" id="branchTabs" aria-label="&#x62A;&#x635;&#x641;&#x64A;&#x629; &#x62D;&#x633;&#x628; &#x627;&#x644;&#x641;&#x631;&#x639;"></div>
           <div class="status hidden" id="dashboardStatus" role="status"></div>
 
           <section class="panel table-panel">
@@ -74,27 +76,27 @@
               <table>
                 <thead>
                   <tr>
-                    <th>الاسم</th>
-                    <th>رقم التليفون</th>
-                    <th>تاريخ الميلاد</th>
-                    <th>الفرع</th>
-                    <th>نوع العضوية</th>
-                    <th>واتساب</th>
-                    <th>تاريخ التسجيل</th>
+                    <th>&#x627;&#x644;&#x627;&#x633;&#x645;</th>
+                    <th>&#x631;&#x642;&#x645; &#x627;&#x644;&#x62A;&#x644;&#x64A;&#x641;&#x648;&#x646;</th>
+                    <th>&#x62A;&#x627;&#x631;&#x64A;&#x62E; &#x627;&#x644;&#x645;&#x64A;&#x644;&#x627;&#x62F;</th>
+                    <th>&#x627;&#x644;&#x641;&#x631;&#x639;</th>
+                    <th>&#x646;&#x648;&#x639; &#x627;&#x644;&#x639;&#x636;&#x648;&#x64A;&#x629;</th>
+                    <th>&#x648;&#x627;&#x62A;&#x633;&#x627;&#x628;</th>
+                    <th>&#x62A;&#x627;&#x631;&#x64A;&#x62E; &#x627;&#x644;&#x62A;&#x633;&#x62C;&#x64A;&#x644;</th>
                   </tr>
                 </thead>
                 <tbody id="recordsBody"></tbody>
               </table>
             </div>
-            <div class="empty hidden" id="emptyState">لا توجد تسجيلات لهذا الاختيار حاليًا.</div>
+            <div class="empty hidden" id="emptyState">&#x644;&#x627; &#x62A;&#x648;&#x62C;&#x62F; &#x62A;&#x633;&#x62C;&#x64A;&#x644;&#x627;&#x62A; &#x644;&#x647;&#x630;&#x627; &#x627;&#x644;&#x627;&#x62E;&#x62A;&#x64A;&#x627;&#x631; &#x62D;&#x627;&#x644;&#x64A;&#x64B;&#x627;.</div>
           </section>
         </section>
       </main>
     </div>
 
-    <script src="config.js?v=20260511-4"></script>
-    <script src="vendor/xlsx.full.min.js"></script>
-    <script src="shared.js?v=20260511-4"></script>
-    <script src="admin.js?v=20260511-4"></script>
+    <script charset="UTF-8" src="config.js?v=20260514-utf8"></script>
+    <script charset="UTF-8" src="vendor/xlsx.full.min.js"></script>
+    <script charset="UTF-8" src="shared.js?v=20260514-utf8"></script>
+    <script charset="UTF-8" src="admin.js?v=20260514-utf8"></script>
   </body>
 </html>

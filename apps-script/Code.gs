@@ -158,7 +158,7 @@ function getRecords_() {
 }
 
 function respond_(data, callback) {
-  const json = JSON.stringify(data);
+  const json = safeJson_(data);
 
   if (callback) {
     return ContentService
@@ -169,4 +169,10 @@ function respond_(data, callback) {
   return ContentService
     .createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function safeJson_(data) {
+  return JSON.stringify(data).replace(/[\u007f-\uffff]/g, function (character) {
+    return '\\u' + ('0000' + character.charCodeAt(0).toString(16)).slice(-4);
+  });
 }

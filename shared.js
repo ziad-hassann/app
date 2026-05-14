@@ -2,26 +2,26 @@
   const STORAGE_KEY = "web_data_registrations_v1";
 
   const arabicDigits = {
-    "٠": "0",
-    "١": "1",
-    "٢": "2",
-    "٣": "3",
-    "٤": "4",
-    "٥": "5",
-    "٦": "6",
-    "٧": "7",
-    "٨": "8",
-    "٩": "9",
-    "۰": "0",
-    "۱": "1",
-    "۲": "2",
-    "۳": "3",
-    "۴": "4",
-    "۵": "5",
-    "۶": "6",
-    "۷": "7",
-    "۸": "8",
-    "۹": "9"
+    "\u0660": "0",
+    "\u0661": "1",
+    "\u0662": "2",
+    "\u0663": "3",
+    "\u0664": "4",
+    "\u0665": "5",
+    "\u0666": "6",
+    "\u0667": "7",
+    "\u0668": "8",
+    "\u0669": "9",
+    "\u06f0": "0",
+    "\u06f1": "1",
+    "\u06f2": "2",
+    "\u06f3": "3",
+    "\u06f4": "4",
+    "\u06f5": "5",
+    "\u06f6": "6",
+    "\u06f7": "7",
+    "\u06f8": "8",
+    "\u06f9": "9"
   };
 
   function getConfig() {
@@ -89,7 +89,7 @@
   }
 
   function toLatinDigits(value) {
-    return String(value || "").replace(/[٠-٩۰-۹]/g, function (digit) {
+    return String(value || "").replace(/[\u0660-\u0669\u06f0-\u06f9]/g, function (digit) {
       return arabicDigits[digit];
     });
   }
@@ -101,7 +101,7 @@
   function normalizeMemberName(value) {
     return cleanText(value)
       .toLowerCase()
-      .replace(/[ًٌٍَُِّْ]/g, "");
+      .replace(/[\u064e\u064b\u064f\u064c\u0650\u064d\u0652\u0651]/g, "");
   }
 
   function normalizePhone(value) {
@@ -125,7 +125,7 @@
       return {
         valid: false,
         normalized: normalized,
-        message: "اكتب رقم موبايل مصري صحيح يبدأ بـ 010 أو 011 أو 012 أو 015."
+        message: "\u0627\u0643\u062a\u0628 \u0631\u0642\u0645 \u0645\u0648\u0628\u0627\u064a\u0644 \u0645\u0635\u0631\u064a \u0635\u062d\u064a\u062d \u064a\u0628\u062f\u0623 \u0628\u0640 010 \u0623\u0648 011 \u0623\u0648 012 \u0623\u0648 015."
       };
     }
 
@@ -150,7 +150,7 @@
     let year;
 
     if (!ymd) {
-      return { valid: false, iso: "", message: "اختار تاريخ الميلاد بالكامل." };
+      return { valid: false, iso: "", message: "\u0627\u062e\u062a\u0627\u0631 \u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u064a\u0644\u0627\u062f \u0628\u0627\u0644\u0643\u0627\u0645\u0644." };
     }
 
     year = Number(ymd[1]);
@@ -158,7 +158,7 @@
     day = Number(ymd[3]);
 
     if (year < 1900 || year > new Date().getFullYear() || !isRealDate(year, month, day)) {
-      return { valid: false, iso: "", message: "اختار تاريخ ميلاد صحيح." };
+      return { valid: false, iso: "", message: "\u0627\u062e\u062a\u0627\u0631 \u062a\u0627\u0631\u064a\u062e \u0645\u064a\u0644\u0627\u062f \u0635\u062d\u064a\u062d." };
     }
 
     return {
@@ -194,12 +194,12 @@
     });
 
     if (exists) {
-      return { ok: true, duplicate: true, message: "تم تسجيل هذا العضو من قبل." };
+      return { ok: true, duplicate: true, message: "\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0647\u0630\u0627 \u0627\u0644\u0639\u0636\u0648 \u0645\u0646 \u0642\u0628\u0644." };
     }
 
     records.push(record);
     saveLocalRegistrations(records);
-    return { ok: true, duplicate: false, record: record, message: "تم تسجيل بيانات العضو بنجاح." };
+    return { ok: true, duplicate: false, record: record, message: "\u062a\u0645 \u062a\u0633\u062c\u064a\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0639\u0636\u0648 \u0628\u0646\u062c\u0627\u062d." };
   }
 
   function createRegistration(record) {
