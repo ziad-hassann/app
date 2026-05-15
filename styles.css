@@ -541,7 +541,7 @@ a {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 18px;
 }
@@ -615,7 +615,7 @@ a {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 880px;
+  min-width: 940px;
 }
 
 th,
@@ -636,6 +636,22 @@ th {
 td {
   color: #213247;
   background: #fff;
+}
+
+.select-cell {
+  width: 52px;
+  min-width: 52px;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.select-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--teal);
+  cursor: pointer;
 }
 
 .whatsapp-link {

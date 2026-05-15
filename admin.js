@@ -9,15 +9,20 @@
   const branchesCount = document.getElementById("branchesCount");
   const visibleCount = document.getElementById("visibleCount");
   const visibleLabel = document.getElementById("visibleLabel");
+  const selectedCount = document.getElementById("selectedCount");
   const branchTabs = document.getElementById("branchTabs");
   const recordsBody = document.getElementById("recordsBody");
   const emptyState = document.getElementById("emptyState");
   const refreshButton = document.getElementById("refreshButton");
+  const selectVisibleButton = document.getElementById("selectVisibleButton");
+  const clearSelectionButton = document.getElementById("clearSelectionButton");
   const exportButton = document.getElementById("exportButton");
+  const selectVisibleToggle = document.getElementById("selectVisibleToggle");
 
   let records = [];
   let activeBranch = "all";
   let currentAdminPassword = "";
+  let selectedIds = new Set();
 
   window.setTimeout(WebData.warmRemoteApi, 800);
 
@@ -53,6 +58,34 @@
     return grouped[activeBranch] || [];
   }
 
+  function getRecordKey(record) {
+    if (record.id) {
+      return String(record.id);
+    }
+
+    return [
+      record.normalized_phone || record.phone || "",
+      record.normalized_name || record.full_name || "",
+      record.created_at || ""
+    ].join("|");
+  }
+
+  function getSelectedRecords() {
+    return records.filter(function (record) {
+      return selectedIds.has(getRecordKey(record));
+    });
+  }
+
+  function syncSelectedIds() {
+    const currentIds = new Set(records.map(getRecordKey));
+
+    selectedIds.forEach(function (id) {
+      if (!currentIds.has(id)) {
+        selectedIds.delete(id);
+      }
+    });
+  }
+
   function createBranchButton(label, count, value) {
     const button = document.createElement("button");
     button.type = "button";
@@ -86,8 +119,10 @@
 
     list.forEach(function (record) {
       const row = document.createElement("tr");
+      const recordKey = getRecordKey(record);
 
       row.innerHTML =
+        '<td class="select-cell"><input class="select-checkbox record-select" type="checkbox" data-record-id="' + escapeHtml(recordKey) + '" aria-label="\u0627\u062e\u062a\u064a\u0627\u0631 \u0627\u0644\u062a\u0633\u062c\u064a\u0644"' + (selectedIds.has(recordKey) ? " checked" : "") + "></td>" +
         "<td>" + escapeHtml(record.full_name) + "</td>" +
         "<td>" + escapeHtml(record.phone) + "</td>" +
         "<td>" + escapeHtml(record.birth_date) + "</td>" +
@@ -100,6 +135,21 @@
     });
   }
 
+  function updateSelectionControls(visibleRecords) {
+    const visibleIds = visibleRecords.map(getRecordKey);
+    const selectedVisibleCount = visibleIds.filter(function (id) {
+      return selectedIds.has(id);
+    }).length;
+
+    selectedCount.textContent = selectedIds.size;
+    selectVisibleButton.disabled = visibleIds.length === 0;
+    clearSelectionButton.disabled = selectedIds.size === 0;
+    exportButton.disabled = selectedIds.size === 0;
+    selectVisibleToggle.disabled = visibleIds.length === 0;
+    selectVisibleToggle.checked = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
+    selectVisibleToggle.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleIds.length;
+  }
+
   function render() {
     const grouped = groupByBranch(records);
     const branches = getBranchNames(grouped);
@@ -109,10 +159,10 @@
     branchesCount.textContent = branches.length;
     visibleCount.textContent = visibleRecords.length;
     visibleLabel.textContent = activeBranch === "all" ? "\u0627\u0644\u0645\u0639\u0631\u0648\u0636 \u0627\u0644\u0622\u0646" : activeBranch;
-    exportButton.disabled = records.length === 0;
 
     renderTabs(grouped, branches);
     renderTable(visibleRecords);
+    updateSelectionControls(visibleRecords);
   }
 
   async function loadRecords() {
@@ -123,6 +173,7 @@
       records = (await WebData.listRegistrations(currentAdminPassword)).sort(function (a, b) {
         return new Date(b.created_at) - new Date(a.created_at);
       });
+      syncSelectedIds();
 
       render();
       WebData.setStatus(dashboardStatus, "success", "\u062a\u0645 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062f\u0627\u062a\u0627 \u0628\u0646\u062c\u0627\u062d.");
@@ -182,17 +233,24 @@
       return;
     }
 
-    const grouped = groupByBranch(records);
+    const selectedRecords = getSelectedRecords();
+
+    if (!selectedRecords.length) {
+      WebData.setStatus(dashboardStatus, "error", "\u0627\u062e\u062a\u0627\u0631 \u062a\u0633\u062c\u064a\u0644 \u0648\u0627\u062d\u062f \u0639\u0644\u0649 \u0627\u0644\u0623\u0642\u0644 \u0642\u0628\u0644 \u0627\u0644\u062a\u062d\u0645\u064a\u0644.");
+      return;
+    }
+
+    const grouped = groupByBranch(selectedRecords);
     const branches = getBranchNames(grouped);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, buildSheet(records), "\u0643\u0644 \u0627\u0644\u062a\u0633\u062c\u064a\u0644\u0627\u062a");
+    XLSX.utils.book_append_sheet(workbook, buildSheet(selectedRecords), "\u0643\u0644 \u0627\u0644\u0645\u062d\u062f\u062f");
 
     branches.forEach(function (branch) {
       XLSX.utils.book_append_sheet(workbook, buildSheet(grouped[branch]), safeSheetName(branch));
     });
 
-    XLSX.writeFile(workbook, "registrations-by-branch.xlsx", {
+    XLSX.writeFile(workbook, "selected-registrations-by-branch.xlsx", {
       bookType: "xlsx",
       cellStyles: true
     });
@@ -213,5 +271,49 @@
   });
 
   refreshButton.addEventListener("click", loadRecords);
+  selectVisibleButton.addEventListener("click", function () {
+    const grouped = groupByBranch(records);
+
+    getVisibleRecords(grouped).forEach(function (record) {
+      selectedIds.add(getRecordKey(record));
+    });
+
+    render();
+  });
+  clearSelectionButton.addEventListener("click", function () {
+    selectedIds.clear();
+    render();
+  });
+  selectVisibleToggle.addEventListener("change", function () {
+    const grouped = groupByBranch(records);
+    const visibleRecords = getVisibleRecords(grouped);
+
+    visibleRecords.forEach(function (record) {
+      const recordKey = getRecordKey(record);
+
+      if (selectVisibleToggle.checked) {
+        selectedIds.add(recordKey);
+      } else {
+        selectedIds.delete(recordKey);
+      }
+    });
+
+    render();
+  });
+  recordsBody.addEventListener("change", function (event) {
+    const target = event.target;
+
+    if (!target.classList.contains("record-select")) {
+      return;
+    }
+
+    if (target.checked) {
+      selectedIds.add(target.dataset.recordId);
+    } else {
+      selectedIds.delete(target.dataset.recordId);
+    }
+
+    render();
+  });
   exportButton.addEventListener("click", exportExcel);
 })();
