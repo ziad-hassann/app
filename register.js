@@ -12,6 +12,7 @@
   const membershipTypeSelect = document.getElementById("membershipType");
   const statusBox = document.getElementById("formStatus");
   const submitButton = document.getElementById("submitButton");
+  const welcomeScreen = document.getElementById("welcomeScreen");
   const membershipChoices = Array.from(document.querySelectorAll(".membership-choice"));
 
   const monthNames = [
@@ -89,6 +90,20 @@
     membershipChoices.forEach(function (button) {
       button.classList.toggle("membership-choice--selected", button.dataset.membership === value);
     });
+  }
+
+  window.setTimeout(function () {
+    document.body.classList.remove("splash-active");
+
+    if (welcomeScreen) {
+      welcomeScreen.classList.add("welcome-screen--hidden");
+    }
+  }, 2300);
+
+  if (welcomeScreen) {
+    welcomeScreen.addEventListener("transitionend", function () {
+      welcomeScreen.remove();
+    }, { once: true });
   }
 
   setupBirthDateFields();

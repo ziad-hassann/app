@@ -11,7 +11,22 @@
     <title>The Meg Academy | &#x62A;&#x633;&#x62C;&#x64A;&#x644; &#x627;&#x644;&#x639;&#x636;&#x648;&#x64A;&#x629;</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="simple-page">
+  <body class="simple-page splash-active">
+    <div class="welcome-screen" id="welcomeScreen" role="status" aria-live="polite">
+      <div class="welcome-screen__water"></div>
+      <div class="welcome-screen__content">
+        <img class="welcome-screen__logo" src="assets/the-meg-logo.png" alt="The Meg Academy">
+        <p>Welcome to</p>
+        <h1>The Meg Academy</h1>
+        <span>&#x62A;&#x633;&#x62C;&#x64A;&#x644; &#x627;&#x644;&#x639;&#x636;&#x648;&#x64A;&#x629;</span>
+        <div class="welcome-screen__loader" aria-hidden="true">
+          <i></i>
+          <i></i>
+          <i></i>
+        </div>
+      </div>
+    </div>
+
     <main class="simple-wrap">
       <section class="simple-card" id="register">
         <header class="simple-header">
@@ -98,8 +113,8 @@
       </section>
     </main>
 
-    <script charset="UTF-8" src="config.js?v=20260515-branches"></script>
-    <script charset="UTF-8" src="shared.js?v=20260515-branches"></script>
-    <script charset="UTF-8" src="register.js?v=20260515-branches"></script>
+    <script charset="UTF-8" src="config.js?v=20260515-welcome"></script>
+    <script charset="UTF-8" src="shared.js?v=20260515-welcome"></script>
+    <script charset="UTF-8" src="register.js?v=20260515-welcome"></script>
   </body>
 </html>
